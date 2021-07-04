@@ -24,8 +24,9 @@ class cell:
     self.has_neighbor_bottom = True
     self.has_neighbor_right = True
     self.has_neighbor_left = True
-    self.nb_neighbors = 0
-
+    self.nb_neighbors = 0 # sum of neighbors alive around this cell
+  
+  # display the cell (black if it's alive, white if it's dead)
   def show(self):
     color = WHITE
     if self.status == 1:
@@ -33,6 +34,7 @@ class cell:
     rect = pygame.Rect(self.x, self.y, (self.w - 1), (self.h - 1))
     pygame.draw.rect(SCREEN, color, rect)
 
+  # verifying if neighbors can be initialized (corner cells cannot have neighbors from all sides)
   def set_neighbors(self, i, j, cols, rows):
     if i == 0:
       self.has_neighbor_top = False
@@ -43,6 +45,7 @@ class cell:
     if j == (cols - 1):
       self.has_neighbor_right = False
 
+  # updating for each cell the number of neighbors alive around it to determine if it stays alive or dies
   def update_nb_neighbors(self, grid, i, j):
     if self.has_neighbor_left:
       self.nb_neighbors += grid[i][j - 1].status
@@ -62,12 +65,14 @@ class cell:
         self.nb_neighbors += grid[i + 1][j + 1].status
 
 def main():
+  # initializing pygame
   OLD_GRID = []
   global SCREEN, CLOCK
   pygame.init()
   SCREEN = pygame.display.set_mode((LENGTH, LENGTH))
   CLOCK = pygame.time.Clock()
   SCREEN.fill(GREY)
+  # building the grid
   h = LENGTH / ROWS
   w = LENGTH / COLS
   for i in range(ROWS):
@@ -75,6 +80,7 @@ def main():
   for i in range(ROWS):
     for j in range(COLS):
       OLD_GRID[i].append(cell((w * i), (h * j), w, h, math.floor(random.randrange(0, 2))))
+  # starting simulation (we build a new grid, and check for each cell the number of neighbors and determine if it stays alive or not, then we display the new updated grid)
   while True:
     for i in range(ROWS):
       for j in range(COLS):
@@ -101,4 +107,5 @@ def main():
     OLD_GRID = NEW_GRID
     pygame.display.update()
 
+# run simulation
 main()
